@@ -26,34 +26,34 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final Screen activeScreen = restaurantScreen;
 
-//  createContentDisplay() {
-//    return Container(
-//      decoration: BoxDecoration(
-//        image: screen.backgroundImage,
-//      ),
-//      child: Scaffold(
-//        backgroundColor: Colors.transparent,
-//        appBar: AppBar(
-//          title: Text(
-//            screen.title,
-//            style: TextStyle(
-//              fontFamily: 'bebas-neue',
-//              fontSize: 25.0,
-//            ),
-//          ),
-//          leading: IconButton(
-//            icon: Icon(Icons.menu),
-//            onPressed: () {
-//              print('Menu');
-//            },
-//          ),
-//          backgroundColor: Colors.transparent,
-//          elevation: 0.0,
-//        ),
-//        body: screen.contentBuilder(context),
-//      ),
-//    );
-//  }
+  createContentDisplay() {
+    return Container(
+      decoration: BoxDecoration(
+        image: activeScreen.backgroundImage,
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          title: Text(
+            activeScreen.title,
+            style: TextStyle(
+              fontFamily: 'bebas-neue',
+              fontSize: 25.0,
+            ),
+          ),
+          leading: IconButton(
+            icon: Icon(Icons.menu),
+            onPressed: () {
+              print('Menu');
+            },
+          ),
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
+        ),
+        body: activeScreen.contentBuilder(context),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
