@@ -26,7 +26,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   Screen activeScreen = restaurantScreen;
 //  String selectedID = '0';
-//TODO(7.4)Time the change the active screen
+//TODO:(7.4)Time to change the active screen
   @override
   Widget build(BuildContext context) {
     return ZoomScaffold(
