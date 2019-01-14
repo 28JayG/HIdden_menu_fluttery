@@ -12,34 +12,29 @@ class ZoomScaffold extends StatefulWidget {
   @override
   _ZoomScaffoldState createState() => _ZoomScaffoldState();
 }
-//TODO:(5.5.1)Introduce Curves to your Animation
+
 class _ZoomScaffoldState extends State<ZoomScaffold>
     with TickerProviderStateMixin {
-  //TODO:(5.2.1) init your menuController and don't forget to listen to it nad dispose it when done
-//  MenuController menuController;
-////  Curve scaleDownCurve = Interval(0.0, 0.3, curve: Curves.easeOut);
-////  Curve slideDownCurve = Interval(0.0, 0.0, curve: Curves.easeOut);
-////  Curve scaleUpCurve = Interval(0.0, 0.0, curve: Curves.easeOut);
-////  Curve slideUpCurve = Interval(0.0, 0.0, curve: Curves.easeOut);
-//
-//
-//  @override
-//  void initState() {
-//    super.initState();
-//    menuController = MenuController(
-//      vsync: this,
-//    )..addListener(() {
-//        setState(() {});
-//      });
-//  }
-//
-//  @override
-//  void dispose() {
-//    menuController.dispose();
-//    super.dispose();
-//  }
+  MenuController menuController;
+  Curve scaleDownCurve = Interval(0.0, 0.3, curve: Curves.easeOut);
+  Curve slideDownCurve = Interval(0.0, 1.0, curve: Curves.easeOut);
+  Curve scaleUpCurve = Interval(0.0, 1.0, curve: Curves.easeOut);
+  Curve slideUpCurve = Interval(0.0, 1.0, curve: Curves.easeOut);
 
-//TODO:(5.2.3)give the menu icon the power to toggle
+  @override
+  void initState() {
+    super.initState();
+    menuController = MenuController(
+      vsync: this,
+    )..addListener(() => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    menuController.dispose();
+    super.dispose();
+  }
+
   createContentDisplay() {
     return zoomAndSlide(
       Container(
@@ -59,8 +54,7 @@ class _ZoomScaffoldState extends State<ZoomScaffold>
             leading: IconButton(
               icon: Icon(Icons.menu),
               onPressed: () {
-                print('Menu');
-//                menuController.toggle();
+                menuController.toggle();
               },
             ),
             backgroundColor: Colors.transparent,
@@ -71,35 +65,30 @@ class _ZoomScaffoldState extends State<ZoomScaffold>
       ),
     );
   }
-//TODO(5.5.2) Calculate new slide and scale
-//TODO:(5.2.2) Control the zoomAndSlide
+
   zoomAndSlide(Widget content) {
-    final slideAmount = 275.0 * menuController.openPercent;
-    final scaleAmount = 1.0 - (0.2 * menuController.openPercent);
+    var scalePercent, slidePercent;
+    switch (menuController.menuState) {
+      case MenuState.closed:
+        scalePercent = 0.0;
+        slidePercent = 0.0;
+        break;
+      case MenuState.closing:
+        scalePercent = scaleUpCurve.transform(menuController.openPercent);
+        slidePercent = slideUpCurve.transform(menuController.openPercent);
+        break;
+      case MenuState.open:
+        scalePercent = 1.0;
+        slidePercent = 1.0;
+        break;
+      case MenuState.opening:
+        scalePercent = scaleDownCurve.transform(menuController.openPercent);
+        slidePercent = slideDownCurve.transform(menuController.openPercent);
+    }
+
+    final slideAmount = 275.0 * slidePercent;
+    final scaleAmount = 1.0 - (0.2 * scalePercent);
     final radiusLength = 10.0 * menuController.openPercent;
-
-//    var scalePercent, slidePercent;
-//    switch(menuController.menuState){
-//      case MenuState.closed:
-//        scalePercent = 0.0;
-//        slidePercent = 0.0;
-//        break;
-//      case MenuState.closing:
-//        scalePercent = scaleUpCurve.transform(menuController.openPercent);
-//        slidePercent = slideUpCurve.transform(menuController.openPercent);
-//        break;
-//      case MenuState.open:
-//        scalePercent = 1.0;
-//        slidePercent = 1.0;
-//        break;
-//      case MenuState.opening:
-//        scalePercent = scaleDownCurve.transform(menuController.openPercent);
-//        slidePercent = slideDownCurve.transform(menuController.openPercent);
-//    }
-
-//    final slideAmount = 275.0 * slidePercent;
-//    final scaleAmount = 1.0 - (0.2 * scalePercent);
-//    final radiusLength = 10.0 * menuController.openPercent;
 
     return Transform(
       transform: Matrix4.translationValues(slideAmount, 0.0, 0.0)
@@ -134,21 +123,48 @@ class _ZoomScaffoldState extends State<ZoomScaffold>
   }
 }
 
-//TODO:(5.1) make a MenuController that notifies whenever state changes
+enum MenuState {
+  open,
+  closed,
+  opening,
+  closing,
+}
 
-//enum MenuState {
-//  open,
-//  closed,
-//  opening,
-//  closing,
-//}
+//Okay now the menu is not moving..//TODO:(6.4) Make ZoomScaffoldMenuController Stateful
 
-//TODO:(5.3.1)Build a widget that finds the MenuContoller and gives it to the menu
+class ZoomScaffoldMenuController extends StatelessWidget {
+  final ZoomScaffoldBuilder builder;
 
-//class ZoomScaffoldMenuController extends StatelessWidget {
+  const ZoomScaffoldMenuController({Key key, this.builder}) : super(key: key);
+
+  getMenuController(BuildContext context) {
+    final scaffoldState =
+        context.ancestorStateOfType(TypeMatcher<_ZoomScaffoldState>())
+            as _ZoomScaffoldState;
+
+    return scaffoldState.menuController;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return builder(context, getMenuController(context));
+  }
+}
+
+//class ZoomScaffoldMenuController extends StatefulWidget {
 //  final ZoomScaffoldBuilder builder;
 //
 //  const ZoomScaffoldMenuController({Key key, this.builder}) : super(key: key);
+//
+//  @override
+//  ZoomScaffoldMenuControllerState createState() {
+//    return new ZoomScaffoldMenuControllerState();
+//  }
+//}
+//
+//class ZoomScaffoldMenuControllerState
+//    extends State<ZoomScaffoldMenuController> {
+//  MenuController menuController;
 //
 //  getMenuController(BuildContext context) {
 //    final scaffoldState =
@@ -159,83 +175,88 @@ class _ZoomScaffoldState extends State<ZoomScaffold>
 //  }
 //
 //  @override
+//  void initState() {
+//    super.initState();
+//
+//    menuController = getMenuController(context)
+//      ..addListener(() {
+//        setState(() {});
+//      });
+//  }
+//
+//  @override
+//  void dispose() {
+//    menuController.removeListener(() {
+//      setState(() {});
+//    });
+//    super.dispose();
+//  }
+//
+//  @override
 //  Widget build(BuildContext context) {
-//    return builder(context, getMenuController(context));
+//    return widget.builder(context, getMenuController(context));
 //  }
 //}
-//
-//typedef Widget ZoomScaffoldBuilder(
-//  BuildContext context,
-//  MenuController menuController,
-//);
 
-//TODO:(5.4)Animate the Controller
-//class MenuController extends ChangeNotifier {
-//  double openPercent = 0.0;
-//  MenuState menuState = MenuState.closed;
-////  final TickerProvider vsync;
-////  final AnimationController _animationController;
-//
-////  MenuController({this.vsync})
-////      : _animationController = AnimationController(vsync: vsync) {
-////    _animationController
-////      ..addListener(() {
-////        notifyListeners();
-////      })
-////      ..duration = Duration(milliseconds: 250)
-////      ..addStatusListener((AnimationStatus status) {
-////        switch (status) {
-////          case AnimationStatus.completed:
-////            menuState = MenuState.open;
-////            break;
-////          case AnimationStatus.reverse:
-////            menuState = MenuState.closing;
-////            break;
-////          case AnimationStatus.dismissed:
-////            menuState = MenuState.closed;
-////            break;
-////          case AnimationStatus.forward:
-////            menuState = MenuState.opening;
-////        }
-////        notifyListeners();
-////      });
-////  }
-//
-////  @override
-////  dispose() {
-////    _animationController.dispose();
-////    super.dispose();
-////  }
-////
-////  get openPercent {
-////    return _animationController.value;
-////  }
-//
-//  open() {
-//    openPercent = 1.0;
-//    menuState = MenuState.open;
-//    notifyListeners();
-//  }
-//
-//  close() {
-//    openPercent = 0.0;
-//    menuState = MenuState.closed;
-//    notifyListeners();
-//  }
-//
-////  open() {
-////    _animationController.forward();
-////  }
-////
-////  close() {
-////    _animationController.reverse();
-////  }
-//
-//  toggle() {
-//    if (menuState == MenuState.open) {
-//      close();
-//    } else if (menuState == MenuState.closed) {
-//      open();
-//    }
-//  }
-//}
+typedef Widget ZoomScaffoldBuilder(
+  BuildContext context,
+  MenuController menuController,
+);
+
+class MenuController extends ChangeNotifier {
+  MenuState menuState = MenuState.closed;
+  final TickerProvider vsync;
+  final AnimationController _animationController;
+
+  MenuController({this.vsync})
+      : _animationController = AnimationController(vsync: vsync) {
+    _animationController
+      ..addListener(() {
+        notifyListeners();
+      })
+      ..duration = Duration(milliseconds: 250)
+      ..addStatusListener((AnimationStatus status) {
+        switch (status) {
+          case AnimationStatus.completed:
+            menuState = MenuState.open;
+            break;
+          case AnimationStatus.reverse:
+            menuState = MenuState.closing;
+            break;
+          case AnimationStatus.dismissed:
+            menuState = MenuState.closed;
+            break;
+          case AnimationStatus.forward:
+            menuState = MenuState.opening;
+            break;
+        }
+        notifyListeners();
+      });
+  }
+
+  @override
+  dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  get openPercent {
+    return _animationController.value;
+  }
+
+  open() {
+    _animationController.forward();
+  }
+
+  close() {
+    _animationController.reverse();
+  }
+
+  toggle() {
+    if (menuState == MenuState.open) {
+      close();
+    } else if (menuState == MenuState.closed) {
+      open();
+    }
+  }
+}
