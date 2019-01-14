@@ -130,12 +130,20 @@ enum MenuState {
   closing,
 }
 
-//Okay now the menu is not moving..//TODO:(6.4) Make ZoomScaffoldMenuController Stateful
-
-class ZoomScaffoldMenuController extends StatelessWidget {
+class ZoomScaffoldMenuController extends StatefulWidget {
   final ZoomScaffoldBuilder builder;
 
   const ZoomScaffoldMenuController({Key key, this.builder}) : super(key: key);
+
+  @override
+  ZoomScaffoldMenuControllerState createState() {
+    return new ZoomScaffoldMenuControllerState();
+  }
+}
+
+class ZoomScaffoldMenuControllerState
+    extends State<ZoomScaffoldMenuController> {
+  MenuController menuController;
 
   getMenuController(BuildContext context) {
     final scaffoldState =
@@ -146,57 +154,28 @@ class ZoomScaffoldMenuController extends StatelessWidget {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    menuController = getMenuController(context)
+      ..addListener(() {
+        setState(() {});
+      });
+  }
+
+  @override
+  void dispose() {
+    menuController.removeListener(() {
+      setState(() {});
+    });
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return builder(context, getMenuController(context));
+    return widget.builder(context, getMenuController(context));
   }
 }
-
-//class ZoomScaffoldMenuController extends StatefulWidget {
-//  final ZoomScaffoldBuilder builder;
-//
-//  const ZoomScaffoldMenuController({Key key, this.builder}) : super(key: key);
-//
-//  @override
-//  ZoomScaffoldMenuControllerState createState() {
-//    return new ZoomScaffoldMenuControllerState();
-//  }
-//}
-//
-//class ZoomScaffoldMenuControllerState
-//    extends State<ZoomScaffoldMenuController> {
-//  MenuController menuController;
-//
-//  getMenuController(BuildContext context) {
-//    final scaffoldState =
-//        context.ancestorStateOfType(TypeMatcher<_ZoomScaffoldState>())
-//            as _ZoomScaffoldState;
-//
-//    return scaffoldState.menuController;
-//  }
-//
-//  @override
-//  void initState() {
-//    super.initState();
-//
-//    menuController = getMenuController(context)
-//      ..addListener(() {
-//        setState(() {});
-//      });
-//  }
-//
-//  @override
-//  void dispose() {
-//    menuController.removeListener(() {
-//      setState(() {});
-//    });
-//    super.dispose();
-//  }
-//
-//  @override
-//  Widget build(BuildContext context) {
-//    return widget.builder(context, getMenuController(context));
-//  }
-//}
 
 typedef Widget ZoomScaffoldBuilder(
   BuildContext context,

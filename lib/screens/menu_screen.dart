@@ -1,161 +1,125 @@
 import 'package:flutter/material.dart';
+import 'package:hidden_drawer_menu/models/menu.dart';
 import 'package:hidden_drawer_menu/zoom_scaffold.dart';
 
+//TODO:(7.2) Let menu screen take up the menu
+//TODO:(7.3) Create a function that returns the id of the menu when it is selected
+//TODO:(7.5) get the selected id
 class MenuScreen extends StatefulWidget {
+  final Menu menu;
+  final Function(String) onMenuItemSelected;
+  final String selectedID;
+
+  const MenuScreen({
+    Key key,
+    this.menu,
+    this.onMenuItemSelected,
+    this.selectedID,
+  }) : super(key: key);
+
   @override
   _MenuScreenState createState() => _MenuScreenState();
 }
 
 class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
-  //TODO(6.2) get AnimationController for title
-//  AnimationController titleAnimationController;
-//
-//  @override
-//  void initState() {
-//    super.initState();
-//
-//    titleAnimationController = AnimationController(
-//      vsync: this,
-//      duration: Duration(milliseconds: 250),
-//    );
-//  }
-//
-//  @override
-//  void dispose() {
-//    titleAnimationController.dispose();
-//    super.dispose();
-//  }
+  AnimationController titleAnimationController;
 
-//TODO:(6.6) Okay now we can Animate each MenuLListItem
-  Widget createMenuList(MenuController controller) {
-//    final titles = ['RESTAURANTS', 'OTHER', 'HELP US GROW', 'SETTINGS'];
-//    final activeIndex = 0;
-//    final perItemDelay = controller.menuState == MenuState.closing ? 0.0 : 0.15;
-//    final List<Widget> items = [];
-//
-//    for (int i = 0; i < titles.length; i++) {
-//      final animationIntervalStart = i * perItemDelay;
-//      final animationIntervalEnd = animationIntervalStart + 0.5;
-//      items.add(
-//        AnimatedMenuListItem(
-//          duration: Duration(milliseconds: 600),
-//          curve: Interval(
-//            animationIntervalStart,
-//            animationIntervalEnd,
-//            curve: Curves.easeOut,
-//          ),
-//          menuController: controller,
-//          menuListItem: MenuListItem(
-//            title: titles[i],
-//            isSelected: i == activeIndex,
-//            onTap: () {
-//              controller.close();
-//            },
-//          ),
-//        ),
-//      );
-//    }
+  @override
+  void initState() {
+    super.initState();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-//      children: items,
-      children: <Widget>[
-        MenuListItem(
-          title: 'Restaurants',
-          isSelected: true,
-          onTap: () {
-            controller.close();
-          },
-        ),
-        MenuListItem(
-          title: 'Others',
-          isSelected: false,
-          onTap: () {
-            controller.close();
-          },
-        ),
-        MenuListItem(
-          title: 'Help us Grow',
-          isSelected: false,
-          onTap: () {
-            controller.close();
-          },
-        ),
-        MenuListItem(
-          title: 'Settings',
-          isSelected: false,
-          onTap: () {
-            controller.close();
-          },
-        ),
-      ],
+    titleAnimationController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 250),
     );
   }
 
-//TODO(6.1) Extract the menuTitle
-//TODO(6.3) Time to build your animation
+  @override
+  void dispose() {
+    titleAnimationController.dispose();
+    super.dispose();
+  }
 
-//  menuTitle(MenuController menuController) {
-////    switch (menuController.menuState) {
-////      case MenuState.closed:
-////      case MenuState.closing:
-////        titleAnimationController.reverse();
-////        break;
-////      case MenuState.open:
-////      case MenuState.opening:
-////        titleAnimationController.forward();
-////        break;
-////    }
-////
-////    return AnimatedBuilder(
-////      animation: titleAnimationController,
-////      child: OverflowBox(
-////        maxWidth: double.infinity,
-////        alignment: Alignment.topLeft,
-////        child: Padding(
-////          padding: const EdgeInsets.all(30.0),
-////          child: Text(
-////            'Menu',
-////            style: TextStyle(
-////              fontFamily: 'mermaid',
-////              fontSize: 200.0,
-////              color: Color(0x88444444),
-////            ),
-////            softWrap: false,
-////          ),
-////        ),
-////      ),
-////      builder: (BuildContext context, Widget child) {
-////        return Transform(
-////          transform: Matrix4.translationValues(
-////            250.0 * (1.0 - titleAnimationController.value) - 100.0,
-////            0.0,
-////            0.0,
-////          ),
-////          child: child,
-////        );
-////      },
-////    );
-//    return Transform(
-//      transform: Matrix4.translationValues(-100.0, 0.0, 0.0),
-//      child: OverflowBox(
-//        maxWidth: double.infinity,
-//        alignment: Alignment.topLeft,
-//        child: Padding(
-//          padding: const EdgeInsets.all(30.0),
-//          child: Text(
-//            'Menu',
-//            style: TextStyle(
-//              fontFamily: 'mermaid',
-//              fontSize: 250.0,
-//              color: Color(0x88444444),
-//            ),
-//            softWrap: false,
-//          ),
-//        ),
-//      ),
-//    );
-//  }
+  Widget createMenuList(MenuController controller) {
+//    final titles = ['RESTAURANTS', 'OTHER', 'HELP US GROW', 'SETTINGS'];
+//    final activeIndex = 0;
+    final perItemDelay = controller.menuState == MenuState.closing ? 0.0 : 0.15;
+    final List<Widget> items = [];
+
+    for (int i = 0; i < widget.menu.menuItems.length; i++) {
+      final animationIntervalStart = i * perItemDelay;
+      final animationIntervalEnd = animationIntervalStart + 0.5;
+      items.add(
+        AnimatedMenuListItem(
+          duration: Duration(milliseconds: 600),
+          curve: Interval(
+            animationIntervalStart,
+            animationIntervalEnd,
+            curve: Curves.easeOut,
+          ),
+          menuController: controller,
+          menuListItem: MenuListItem(
+//            title: titles[i],
+            title: widget.menu.menuItems[i].title,
+//            isSelected: activeIndex == i,
+          isSelected: widget.menu.menuItems[i].id == widget.selectedID,
+            onTap: () {
+              widget.onMenuItemSelected(widget.menu.menuItems[i].id);
+              controller.close();
+            },
+          ),
+        ),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: items,
+    );
+  }
+
+  menuTitle(MenuController menuController) {
+    switch (menuController.menuState) {
+      case MenuState.closed:
+      case MenuState.closing:
+        titleAnimationController.reverse();
+        break;
+      case MenuState.open:
+      case MenuState.opening:
+        titleAnimationController.forward();
+        break;
+    }
+
+    return AnimatedBuilder(
+      animation: titleAnimationController,
+      child: OverflowBox(
+        maxWidth: double.infinity,
+        alignment: Alignment.topLeft,
+        child: Padding(
+          padding: const EdgeInsets.all(30.0),
+          child: Text(
+            'Menu',
+            style: TextStyle(
+              fontFamily: 'mermaid',
+              fontSize: 200.0,
+              color: Color(0x88444444),
+            ),
+            softWrap: false,
+          ),
+        ),
+      ),
+      builder: (BuildContext context, Widget child) {
+        return Transform(
+          transform: Matrix4.translationValues(
+            250.0 * (1.0 - titleAnimationController.value) - 100.0,
+            0.0,
+            0.0,
+          ),
+          child: child,
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -174,26 +138,7 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
           color: Colors.transparent,
           child: Stack(
             children: <Widget>[
-//              menuTitle(menuController),
-                Transform(
-                  transform: Matrix4.translationValues(-100.0, 0.0, 0.0),
-                  child: OverflowBox(
-                    maxWidth: double.infinity,
-                    alignment: Alignment.topLeft,
-                    child: Padding(
-                      padding: const EdgeInsets.all(30.0),
-                      child: Text(
-                        'Menu',
-                        style: TextStyle(
-                          fontFamily: 'mermaid',
-                          fontSize: 250.0,
-                          color: Color(0x88444444),
-                        ),
-                        softWrap: false,
-                      ),
-                    ),
-                  ),
-                ),
+              menuTitle(menuController),
               Transform(
                 transform: Matrix4.translationValues(0.0, 240.0, 0.0),
                 child: createMenuList(menuController),
@@ -206,77 +151,76 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
   }
 }
 
-//TODO(6.5) lets create an AnimatedMenuListItem
-//class AnimatedMenuListItem extends ImplicitlyAnimatedWidget {
-//  final MenuController menuController;
-//  final MenuListItem menuListItem;
-//  final Duration duration;
-//
-//  AnimatedMenuListItem({
-//    this.menuController,
-//    this.duration,
-//    this.menuListItem,
-//    curve,
-//  }) : super(
-//          duration: duration,
-//          curve: curve,
-//        );
-//
-//  @override
-//  _AnimatedMenuListItemState createState() => _AnimatedMenuListItemState();
-//}
-//
-//class _AnimatedMenuListItemState
-//    extends AnimatedWidgetBaseState<AnimatedMenuListItem> {
-//  final closedSlidePosition = 200.0;
-//  final openSlidePosition = 0.0;
-//  Tween<double> _opacity;
-//  Tween<double> _translation;
-//
-//  @override
-//  void forEachTween(visitor) {
-//    var slide, opacity;
-//
-//    switch (widget.menuController.menuState) {
-//      case MenuState.closed:
-//      case MenuState.closing:
-//        slide = closedSlidePosition;
-//        opacity = 0.0;
-//        break;
-//      case MenuState.open:
-//      case MenuState.opening:
-//        slide = openSlidePosition;
-//        opacity = 1.0;
-//        break;
-//    }
-//    _opacity = visitor(
-//      _opacity,
-//      opacity,
-//      (dynamic value) => Tween<double>(begin: value),
-//    );
-//
-//    _translation = visitor(
-//      _translation,
-//      slide,
-//      (dynamic value) => Tween<double>(begin: value),
-//    );
-//  }
-//
-//  @override
-//  Widget build(BuildContext context) {
-//    return Opacity(
-//      opacity: _opacity.evaluate(animation),
-//      child: Transform(
-//        transform: Matrix4.translationValues(
-//          0.0,
-//          _translation.evaluate(animation),
-//          0.0,
-//        ),
-//        child: widget.menuListItem,
-//      ),
-//    );
-//  }
-//}
+class AnimatedMenuListItem extends ImplicitlyAnimatedWidget {
+  final MenuController menuController;
+  final MenuListItem menuListItem;
+  final Duration duration;
+
+  AnimatedMenuListItem({
+    this.menuController,
+    this.duration,
+    this.menuListItem,
+    curve,
+  }) : super(
+          duration: duration,
+          curve: curve,
+        );
+
+  @override
+  _AnimatedMenuListItemState createState() => _AnimatedMenuListItemState();
+}
+
+class _AnimatedMenuListItemState
+    extends AnimatedWidgetBaseState<AnimatedMenuListItem> {
+  final closedSlidePosition = 200.0;
+  final openSlidePosition = 0.0;
+  Tween<double> _opacity;
+  Tween<double> _translation;
+
+  @override
+  void forEachTween(visitor) {
+    var slide, opacity;
+
+    switch (widget.menuController.menuState) {
+      case MenuState.closed:
+      case MenuState.closing:
+        slide = closedSlidePosition;
+        opacity = 0.0;
+        break;
+      case MenuState.open:
+      case MenuState.opening:
+        slide = openSlidePosition;
+        opacity = 1.0;
+        break;
+    }
+    _opacity = visitor(
+      _opacity,
+      opacity,
+      (dynamic value) => Tween<double>(begin: value),
+    );
+
+    _translation = visitor(
+      _translation,
+      slide,
+      (dynamic value) => Tween<double>(begin: value),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Opacity(
+      opacity: _opacity.evaluate(animation),
+      child: Transform(
+        transform: Matrix4.translationValues(
+          0.0,
+          _translation.evaluate(animation),
+          0.0,
+        ),
+        child: widget.menuListItem,
+      ),
+    );
+  }
+}
 
 class MenuListItem extends StatelessWidget {
   final String title;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hidden_drawer_menu/models/menu.dart';
 import 'package:hidden_drawer_menu/screens/menu_screen.dart';
 import 'package:hidden_drawer_menu/screens/other_screen.dart';
 import 'package:hidden_drawer_menu/screens/restaurant_screen.dart';
@@ -23,16 +24,24 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
-  final Screen activeScreen = restaurantScreen;
-
-
-
+  Screen activeScreen = restaurantScreen;
+  String selectedID = '0';
+//TODO(7.4)Time the change the active screen
   @override
   Widget build(BuildContext context) {
     return ZoomScaffold(
       contentScreen: activeScreen,
-      menuScreen: MenuScreen(),
+      menuScreen: MenuScreen(
+        menu: Menu(
+          menuItems: items,
+        ),
+        onMenuItemSelected: (selectedItem) {
+          selectedID = selectedItem;
+          activeScreen = selectedItem == '0' ? restaurantScreen : otherScreen;
+          setState(() {});
+        },
+        selectedID: selectedID,
+      ),
     );
   }
 }
