@@ -6,16 +6,16 @@ import 'package:hidden_drawer_menu/zoom_scaffold.dart';
 //TODO:(7.3) Create a function that returns the id of the menu when it is selected
 //TODO:(7.5) get the selected id
 class MenuScreen extends StatefulWidget {
-  final Menu menu;
-  final Function(String) onMenuItemSelected;
-  final String selectedID;
+//  final Menu menu;
+////  final Function(String) onMenuItemSelected;
+//////  final String selectedID;
 
-  const MenuScreen({
-    Key key,
-    this.menu,
-    this.onMenuItemSelected,
-    this.selectedID,
-  }) : super(key: key);
+//  const MenuScreen({
+//    Key key,
+//    this.menu,
+////    this.onMenuItemSelected,
+//////    this.selectedID,
+//  }) : super(key: key);
 
   @override
   _MenuScreenState createState() => _MenuScreenState();
@@ -41,12 +41,13 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
   }
 
   Widget createMenuList(MenuController controller) {
-//    final titles = ['RESTAURANTS', 'OTHER', 'HELP US GROW', 'SETTINGS'];
-//    final activeIndex = 0;
+    final titles = ['RESTAURANTS', 'OTHER', 'HELP US GROW', 'SETTINGS'];
+    final activeIndex = 0;
     final perItemDelay = controller.menuState == MenuState.closing ? 0.0 : 0.15;
     final List<Widget> items = [];
 
-    for (int i = 0; i < widget.menu.menuItems.length; i++) {
+//    for (int i = 0; i < widget.menu.menuItems.length; i++) {
+    for (int i = 0; i < titles.length; i++) {
       final animationIntervalStart = i * perItemDelay;
       final animationIntervalEnd = animationIntervalStart + 0.5;
       items.add(
@@ -59,12 +60,12 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
           ),
           menuController: controller,
           menuListItem: MenuListItem(
-//            title: titles[i],
-            title: widget.menu.menuItems[i].title,
-//            isSelected: activeIndex == i,
-          isSelected: widget.menu.menuItems[i].id == widget.selectedID,
+            title: titles[i],
+//            title: widget.menu.menuItems[i].title,
+            isSelected: activeIndex == i,
+//          isSelected: widget.menu.menuItems[i].id == widget.selectedID,
             onTap: () {
-              widget.onMenuItemSelected(widget.menu.menuItems[i].id);
+//              widget.onMenuItemSelected(widget.menu.menuItems[i].id);
               controller.close();
             },
           ),

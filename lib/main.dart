@@ -25,22 +25,22 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   Screen activeScreen = restaurantScreen;
-  String selectedID = '0';
+//  String selectedID = '0';
 //TODO(7.4)Time the change the active screen
   @override
   Widget build(BuildContext context) {
     return ZoomScaffold(
       contentScreen: activeScreen,
       menuScreen: MenuScreen(
-        menu: Menu(
-          menuItems: items,
-        ),
-        onMenuItemSelected: (selectedItem) {
-          selectedID = selectedItem;
-          activeScreen = selectedItem == '0' ? restaurantScreen : otherScreen;
-          setState(() {});
-        },
-        selectedID: selectedID,
+//        menu: Menu(
+//          menuItems: items,
+//        ),
+//        onMenuItemSelected: (selectedItem) {
+////          selectedID = selectedItem;
+//          activeScreen = selectedItem == '0' ? restaurantScreen : otherScreen;
+//          setState(() {});
+//        },
+//        selectedID: selectedID,
       ),
     );
   }
